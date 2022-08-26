@@ -13,17 +13,21 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomePage from './pages/HomePage';
 import LandingPage from "./pages/LandingPage"
 import PokemonComponent from './pages/PokemonComp';
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName='PokemonComponent'>
-        <Stack.Screen name="Home" component={HomePage} />
-        <Stack.Screen name="Pokedex" component={LandingPage} />
-        <Stack.Screen name="PokemonComponent" component={PokemonComponent} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName='Pokedex'>
+          <Stack.Screen name="Home" component={HomePage} />
+          <Stack.Screen name="Pokedex" component={LandingPage} />
+          <Stack.Screen name="PokemonComponent" component={PokemonComponent} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   )
 
 };

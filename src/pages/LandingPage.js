@@ -1,5 +1,7 @@
-import React from "react";
-import { ScrollView, View, Text, Image, FlatList } from "react-native";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from 'react-redux'
+import { loadPokemon } from "../redux/actions/PokemonAction";
+import { ScrollView, View, Text, Image, FlatList, TouchableHighlight, TextInput } from "react-native";
 // const imgurl = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/0"
 const data = {
     count: 1154,
@@ -88,6 +90,7 @@ const data = {
         }
     ]
 }
+
 const generateColor = () => {
     const randomColor = Math.floor(Math.random() * 16777215)
         .toString(16)
@@ -95,29 +98,42 @@ const generateColor = () => {
     return `#${randomColor}`;
 };
 
-const LandingPage = () => {
-    return (
-        // <ScrollView>
-        <FlatList style={{ backgroundColor: "#000" }} numColumns={2}
-            data={data.results}
-            renderItem={(item) => {
-                var imgurl;
-                var imgIndex = item.index + 1;
-                // console.log(item.index)
-                if (item.index < 9) {
-                    imgurl = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/00"
-                }
-                else {
-                    imgurl = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/0"
-                }
-                return <View style={{ flex: 1, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", margin: 8, borderRadius: 10, backgroundColor: generateColor() }}>
-                    <Image key={item.index} source={{ uri: imgurl + imgIndex + ".png" }} style={{ width: 200, height: 200 }}></Image>
-                    <Text style={{color:"#fff",fontSize:14}}>{item.item.name}</Text>
-                </View>
-            }} >
-        </FlatList>
+const LandingPage = ({ navigation }) => {
+    const [searchQuery, setSearchQuery] = useState("")
+    const pokemonListData = useSelector(state => state.PokemonReducer)
+    // console.log("landing page", pokemonListData)
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(loadPokemon())
+    }, [])
 
-        // </ScrollView>
+    return (
+        <View style={{ flex: 1 }}>
+            <View style={{ margin: 10 }}>
+                <TextInput style={{ borderColor: "#000", borderWidth: 1, borderRadius: 10 }} placeholder="Search for Pokemon"></TextInput>
+
+            </View>
+            <FlatList style={{ backgroundColor: "#000" }} numColumns={2}
+                data={pokemonListData.pokemonList}
+                renderItem={(item) => {
+                    var imgIndex = item.item.url.split("/")[6]
+                    var imgurl;
+                    // var imgIndex = item.index + 1;
+                    if (imgIndex < 10) {
+                        imgurl = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/00"
+                    }
+                    else {
+                        imgurl = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/0"
+                    }
+                    return <TouchableHighlight onPress={() => navigation.navigate("PokemonComponent", { propsdata: { imgurl: imgurl + imgIndex + ".png", apidata: item.item.url } })}>
+                        <View style={{ flex: 1, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", margin: 8, borderRadius: 10, backgroundColor: generateColor() }}>
+                            <Image key={item.index} source={{ uri: imgurl + imgIndex + ".png" }} style={{ width: 200, height: 200 }}></Image>
+                            <Text style={{ color: "#fff", fontSize: 14 }}>{item.item.name}</Text>
+                        </View>
+                    </TouchableHighlight>
+                }} >
+            </FlatList>
+        </View>
     )
     {/* {data.results.map((pokemons, index) => {
                 return (

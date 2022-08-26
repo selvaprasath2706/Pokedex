@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
+import { loadPokemonData } from "../redux/actions/PokemonAction";
 import CircularProgress from 'react-native-circular-progress-indicator';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { FlatList } from "react-native-gesture-handler";
+import { useSelector, useDispatch } from "react-redux";
 
 const url = "https://pokeapi.co/api/v2/pokemon/1/"
-const imgurl = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png"
+// const imgurl = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png"
 const data = {
     abilities: [],
     base_experience: 64,
@@ -94,47 +96,59 @@ const data = {
     weight: 69
 }
 const generateColor = () => {
+    
     const randomColor = Math.floor(Math.random() * 16777215)
         .toString(16)
         .padStart(6, '0');
     return `#${randomColor}`;
 };
-const PokemonComponent = ({ props }) => {
-    return (
-        <View style={{ backgroundColor: "#000",flex:1 }}>
-            <View style={{ justifyContent: "center", alignItems: "center", backgroundColor: generateColor(), borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
-                <Image source={{ uri: imgurl }} style={{ height: 200, width: 200 }}>
-                </Image>
-            </View>
-            <View>
-                <Text style={{ alignSelf: "center", fontSize: 18, color: "#fff" }}>{data.species.name}</Text>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-evenly" }}>
-                    {data.types.map((item) => {
-                        return (
-                            <View key={item.slot} style={{ backgroundColor: generateColor(), borderColor: "#000", borderWidth: 1, borderRadius: 10, paddingLeft: 10, paddingRight: 10 }}>
-                                <Text key={item.type.name} style={{ marginHorizontal: 10, marginVertical: 2 }}>{item.type.name}</Text>
-                            </View>
-                        )
-                    })}
-                </View>
-                <View style={{ flexDirection: "row", justifyContent: "space-around", alignItems: "center", margin: 10, padding: 10 }}>
-                    <View style={{ flexDirection: "column" }}>
-                        <Text style={{ color: "#fff", fontWeight: "700", fontSize: 21 }}>{data.weight} Kg</Text>
-                        <Text style={{ color: "#fff" }}>Weight</Text>
-                    </View>
-                    <View style={{ flexDirection: "column" }}>
-                        <Text style={{ color: "#fff", fontWeight: "700", fontSize: 21 }}>{data.height} M</Text>
-                        <Text style={{ color: "#fff" }}>Height</Text>
-                    </View>
-                </View>
+const PokemonComponent = ({ route }) => {
+    // console.log()
+    const {imgurl,apidata}=route.params.propsdata
+    const pokemonData = useSelector(state => state.PokemonDataReducer)
+    // console.log("pokmon data", pokemonData)
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(loadPokemonData(apidata))
+    }, [])
 
-                {/* <CircularProgress
+    return (
+        <View style={{ flex: 1 }}>
+            {/* {console.log("within component", pokemonData)} */}
+            {pokemonData.pokemonData.abilities && <View style={{ backgroundColor: "#000", flex: 1 }}>
+                <View style={{ justifyContent: "center", alignItems: "center", backgroundColor: generateColor(), borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
+                    <Image source={{ uri: imgurl }} style={{ height: 200, width: 200 }}>
+                    </Image>
+                </View>
+                <View>
+                    <Text style={{ alignSelf: "center", fontSize: 18, color: "#fff" }}>{pokemonData.pokemonData.species.name}</Text>
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-evenly" }}>
+                        {pokemonData.pokemonData.types?.map((item) => {
+                            return (
+                                <View key={item.slot} style={{ backgroundColor: generateColor(), borderColor: "#000", borderWidth: 1, borderRadius: 10, paddingLeft: 10, paddingRight: 10 }}>
+                                    <Text key={item.type.name} style={{ marginHorizontal: 10, marginVertical: 2 }}>{item.type.name}</Text>
+                                </View>
+                            )
+                        })}
+                    </View>
+                    <View style={{ flexDirection: "row", justifyContent: "space-around", alignItems: "center", margin: 10, padding: 10 }}>
+                        <View style={{ flexDirection: "column" }}>
+                            <Text style={{ color: "#fff", fontWeight: "700", fontSize: 21 }}>{pokemonData.pokemonData.weight} Kg</Text>
+                            <Text style={{ color: "#fff" }}>Weight</Text>
+                        </View>
+                        <View style={{ flexDirection: "column" }}>
+                            <Text style={{ color: "#fff", fontWeight: "700", fontSize: 21 }}>{pokemonData.pokemonData.height} M</Text>
+                            <Text style={{ color: "#fff" }}>Height</Text>
+                        </View>
+                    </View>
+
+                    {/* <CircularProgress
                     value={100}
                     maxValue={300}
                     activeStrokeColor={'#2465FD'}
                     activeStrokeSecondaryColor={'#C25AFF'}
                 /> */}
-                {/* <View>
+                    {/* <View>
                     <CircularProgress
                         value={60}
                         radius={120}
@@ -146,14 +160,14 @@ const PokemonComponent = ({ props }) => {
                         titleStyle={{ fontWeight: 'bold' }}
                     />
                 </View> */}
-                {/* <AnimatedCircularProgress
+                    {/* <AnimatedCircularProgress
                     size={120}
                     width={15}
                     fill={10000}
                     tintColor="#00e0ff"
                     onAnimationComplete={() => console.log('onAnimationComplete')}
                     backgroundColor="#3d5875" /> */}
-                {/* <CircularProgress
+                    {/* <CircularProgress
                     value={300}
                     radius={60}
                     duration={8000}
@@ -166,7 +180,7 @@ const PokemonComponent = ({ props }) => {
 
 
 
-                {/* <CircularProgress
+                    {/* <CircularProgress
                     value={97}
                     radius={120}
                     inActiveStrokeOpacity={0.5}
@@ -181,8 +195,8 @@ const PokemonComponent = ({ props }) => {
                         width: 4,
                     }}
                 /> */}
-            </View>
-            {/* <View style={{backgroundColor:"white",flexDirection:"row"}}>
+                </View>
+                {/* <View style={{backgroundColor:"white",flexDirection:"row"}}>
                     {data.stats.map((item,index) => {
                        return <View key={index}>
                         <CircularProgress
@@ -200,30 +214,32 @@ const PokemonComponent = ({ props }) => {
                     })}
                 </View> */}
 
-            <View style={{ justifyContent: "center", alignItems: "center" }} >
-                <Text style={{ color: "#fff", margin: 10 }}>Base stats</Text>
-                <FlatList 
-                    horizontal
-                    // numColumns={3}
-                    data={data.stats}
-                    renderItem={(item) => {
-                        return <View style={{margin:10,justifyContent:"center",alignItems:"center"}}>
-                            <CircularProgress
-                                value={item.item.base_stat}
-                                // maxValue={20}
-                                radius={40}
-                                // title={item.item.stat.name}
-                                titleColor={'white'}
-                                activeStrokeColror={'#2465FD'}
-                                activeStrokeSecondaryColor={'#C25AFF'}
-                            />
-                            <Text style={{ color: "#fff" }}>{item.item.stat.name}</Text>
-                        </View>
-                    }}>
+                <View style={{ justifyContent: "center", alignItems: "center" }} >
+                    <Text style={{ color: "#fff", margin: 10 }}>Base stats</Text>
+                    <FlatList
+                        horizontal
+                        // numColumns={3}
+                        data={pokemonData.pokemonData.stats}
+                        renderItem={(item) => {
+                            return <View style={{ margin: 10, justifyContent: "center", alignItems: "center" }}>
+                                <CircularProgress
+                                    value={item.item.base_stat}
+                                    // maxValue={20}
+                                    radius={40}
+                                    // title={item.item.stat.name}
+                                    titleColor={'white'}
+                                    activeStrokeColror={'#2465FD'}
+                                    activeStrokeSecondaryColor={'#C25AFF'}
+                                />
+                                <Text style={{ color: "#fff" }}>{item.item.stat.name}</Text>
+                            </View>
+                        }}>
 
-                </FlatList>
-            </View>
+                    </FlatList>
+                </View>
+            </View>}
         </View>
+
     )
 }
 export default PokemonComponent
