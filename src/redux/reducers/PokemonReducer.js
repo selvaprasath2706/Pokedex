@@ -12,6 +12,7 @@ export default pokemonReducer=(state=initialState,action)=>{
         case 'LOAD_POKEMONLIST_SUCCESS':
             return Object.assign({},state,{pokemonList:action.payload,isLoading:false})
         case 'LOAD_POKEMONLIST_FAILURE':
+            console.log(action.payload)
             return Object.assign({},state,{error:action.payload,isLoading:false})
             default:
             return state

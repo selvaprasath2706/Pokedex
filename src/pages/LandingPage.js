@@ -1,95 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 import { loadPokemon } from "../redux/actions/PokemonAction";
-import { ScrollView, View, Text, Image, FlatList, TouchableHighlight, TextInput } from "react-native";
-// const imgurl = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/0"
-const data = {
-    count: 1154,
-    next: "https://pokeapi.co/api/v2/pokemon?offset=20&limit=20",
-    previous: null,
-    results: [
-        {
-            name: "bulbasaur",
-            url: "https://pokeapi.co/api/v2/pokemon/1/"
-        },
-        {
-            name: "ivysaur",
-            url: "https://pokeapi.co/api/v2/pokemon/2/"
-        },
-        {
-            name: "venusaur",
-            url: "https://pokeapi.co/api/v2/pokemon/3/"
-        },
-        {
-            name: "charmander",
-            url: "https://pokeapi.co/api/v2/pokemon/4/"
-        },
-        {
-            name: "charmeleon",
-            url: "https://pokeapi.co/api/v2/pokemon/5/"
-        },
-        {
-            name: "charizard",
-            url: "https://pokeapi.co/api/v2/pokemon/6/"
-        },
-        {
-            name: "squirtle",
-            url: "https://pokeapi.co/api/v2/pokemon/7/"
-        },
-        {
-            name: "wartortle",
-            url: "https://pokeapi.co/api/v2/pokemon/8/"
-        },
-        {
-            name: "blastoise",
-            url: "https://pokeapi.co/api/v2/pokemon/9/"
-        },
-        {
-            name: "caterpie",
-            url: "https://pokeapi.co/api/v2/pokemon/10/"
-        },
-        {
-            name: "metapod",
-            url: "https://pokeapi.co/api/v2/pokemon/11/"
-        },
-        {
-            name: "butterfree",
-            url: "https://pokeapi.co/api/v2/pokemon/12/"
-        },
-        {
-            name: "weedle",
-            url: "https://pokeapi.co/api/v2/pokemon/13/"
-        },
-        {
-            name: "kakuna",
-            url: "https://pokeapi.co/api/v2/pokemon/14/"
-        },
-        {
-            name: "beedrill",
-            url: "https://pokeapi.co/api/v2/pokemon/15/"
-        },
-        {
-            name: "pidgey",
-            url: "https://pokeapi.co/api/v2/pokemon/16/"
-        },
-        {
-            name: "pidgeotto",
-            url: "https://pokeapi.co/api/v2/pokemon/17/"
-        },
-        {
-            name: "pidgeot",
-            url: "https://pokeapi.co/api/v2/pokemon/18/"
-        },
-        {
-            name: "rattata",
-            url: "https://pokeapi.co/api/v2/pokemon/19/"
-        },
-        {
-            name: "raticate",
-            url: "https://pokeapi.co/api/v2/pokemon/20/"
-        }
-    ]
-}
+import { View, Text, Image, FlatList, TouchableHighlight, TextInput, ActivityIndicator } from "react-native";
+import Lottie from "lottie-react-native"
 
 const generateColor = () => {
     const randomColor = Math.floor(Math.random() * 16777215)
@@ -97,42 +10,88 @@ const generateColor = () => {
         .padStart(6, '0');
     return `#${randomColor}`;
 };
-
+var timerId;
 const LandingPage = ({ navigation }) => {
+
+    // const throttlefunction = (e) => {
+    //     // console.log("throttle functiion")
+    //     // console.log("timer befire",timerId)
+    //     if (timerId) {
+    //         // console.log("if ", timerId)
+    //         return
+
+    //     }
+    //     // console.log("out", timerId)
+    //     timerId = setTimeout(() => {
+    //         filterData(e)
+    //         // console.log("out after", timerId)
+    //         timerId = undefined;
+    //         // console.log("out undefin", timerId)
+    //     }, 1000)
+    //     // console.log(timerId)
+    // }
+    const filterData = (e) => {
+        // console.log(e, "Throtle")
+        setFilteredPokemon(pokemonListData.pokemonList.filter(
+            pokemon => pokemon.name.toLowerCase().includes(e.toLowerCase())
+        ))
+        setIsLoading(false)
+    }
     const [searchQuery, setSearchQuery] = useState("")
+    const [debounceTimeout, setDebounceTimeout] = useState(0)
+    const [isLoading, setIsLoading] = useState(true)
     const pokemonListData = useSelector(state => state.PokemonReducer)
-    // console.log("landing page", pokemonListData)
+    const [filteredPokemon, setFilteredPokemon] = useState([])
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(loadPokemon())
+        console.log(pokemonListData)
+        setIsLoading(pokemonListData.isLoading)
     }, [])
-
     return (
-        <View style={{ flex: 1 }}>
-            <View style={{ margin: 10 }}>
-                <TextInput style={{ borderColor: "#000", borderWidth: 1, borderRadius: 10 }} placeholder="Search for Pokemon"></TextInput>
-
+        <View style={{ flex: 1,backgroundColor:"#000" }}>
+            {!pokemonListData.error ? <View style={{ flex: 1 }}>
+                <View style={{ margin: 10 }}>
+                    <TextInput value={searchQuery} onChangeText={(e) => {
+                        setSearchQuery(e)
+                        setIsLoading(true)
+                        // throttlefunction(e)
+                        if (debounceTimeout)
+                            clearTimeout(debounceTimeout)
+                        setDebounceTimeout(setTimeout(() => { filterData(e) }, 2000))
+                    }} style={{ borderColor: "#6b6a66",backgroundColor:"#6b6a66", borderWidth: 1, borderRadius: 10,color:"#fff" }} placeholderTextColor="#fff" placeholder="Search for Pokemon"
+                    />
+                </View>
+                {!isLoading && searchQuery.length && !filteredPokemon.length? <View>
+                    <Text style={{color:"#fff"}}>The pokemon you have searched is unavailable</Text>
+                    </View>:<></>}
+                {isLoading && <ActivityIndicator size="large"></ActivityIndicator>}
+                {!isLoading && (searchQuery.length || filteredPokemon) && <FlatList style={{ backgroundColor: "#000" }} numColumns={2}
+                    data={searchQuery.length <= 0 ? pokemonListData.pokemonList : filteredPokemon}
+                    renderItem={(item) => {
+                        var imgIndex = item.item.url.split("/")[6]
+                        var imgurl;
+                        // var imgIndex = item.index + 1;
+                        if (imgIndex < 10) {
+                            imgurl = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/00"
+                        }
+                        else {
+                            imgurl = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/0"
+                        }
+                        return <TouchableHighlight onPress={() => navigation.navigate("PokemonComponent", { propsdata: { imgurl: imgurl + imgIndex + ".png", apidata: item.item.url } })}>
+                            <View style={{ flex: 1, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", margin: 8, borderRadius: 10, backgroundColor: generateColor() }}>
+                                <Image key={item.index} source={{ uri: imgurl + imgIndex + ".png" }} style={{ width: 200, height: 200 }}></Image>
+                                <Text style={{ color: "#fff", fontSize: 14 }}>{item.item.name}</Text>
+                            </View>
+                        </TouchableHighlight>
+                    }} >
+                </FlatList>}
             </View>
-            <FlatList style={{ backgroundColor: "#000" }} numColumns={2}
-                data={pokemonListData.pokemonList}
-                renderItem={(item) => {
-                    var imgIndex = item.item.url.split("/")[6]
-                    var imgurl;
-                    // var imgIndex = item.index + 1;
-                    if (imgIndex < 10) {
-                        imgurl = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/00"
-                    }
-                    else {
-                        imgurl = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/0"
-                    }
-                    return <TouchableHighlight onPress={() => navigation.navigate("PokemonComponent", { propsdata: { imgurl: imgurl + imgIndex + ".png", apidata: item.item.url } })}>
-                        <View style={{ flex: 1, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", margin: 8, borderRadius: 10, backgroundColor: generateColor() }}>
-                            <Image key={item.index} source={{ uri: imgurl + imgIndex + ".png" }} style={{ width: 200, height: 200 }}></Image>
-                            <Text style={{ color: "#fff", fontSize: 14 }}>{item.item.name}</Text>
-                        </View>
-                    </TouchableHighlight>
-                }} >
-            </FlatList>
+                : <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+                    <Lottie style={{ height: 200 }} source={require('../lotti/error-2.json')}></Lottie>
+
+                    <Text style={{ flex: 1, fontSize: 30 }}>The server responded with 404 Error</Text>
+                </View>}
         </View>
     )
     {/* {data.results.map((pokemons, index) => {
