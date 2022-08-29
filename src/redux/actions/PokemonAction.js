@@ -4,7 +4,7 @@ export const loadPokemon = () => {
     return (dispatch, getState) => {
         dispatch({ type: 'LOAD_POKEMONLIST_START' })
         axios.get("https://pokeapi.co/api/v2/pokemon").then((response) => {
-            // console.log(response.data.results.)
+            console.log(response.data.results)
             // console.log(response.data.results.map((val,index)=>({...val,index:index+1})))
             dispatch({ type: 'LOAD_POKEMONLIST_SUCCESS', payload: response.data.results })
         }).catch((err) => {

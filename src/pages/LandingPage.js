@@ -49,7 +49,9 @@ const LandingPage = ({ navigation }) => {
         setIsLoading(pokemonListData.isLoading)
     }, [])
     return (
-        <View style={{ flex: 1,backgroundColor:"#000" }}>
+        <View style={{ flex: 1, backgroundColor: "#000" }}>
+            {console.log(pokemonListData)}
+
             {!pokemonListData.error ? <View style={{ flex: 1 }}>
                 <View style={{ margin: 10 }}>
                     <TextInput value={searchQuery} onChangeText={(e) => {
@@ -59,14 +61,14 @@ const LandingPage = ({ navigation }) => {
                         if (debounceTimeout)
                             clearTimeout(debounceTimeout)
                         setDebounceTimeout(setTimeout(() => { filterData(e) }, 2000))
-                    }} style={{ borderColor: "#6b6a66",backgroundColor:"#6b6a66", borderWidth: 1, borderRadius: 10,color:"#fff" }} placeholderTextColor="#fff" placeholder="Search for Pokemon"
+                    }} style={{ borderColor: "#6b6a66", backgroundColor: "#6b6a66", borderWidth: 1, borderRadius: 10, color: "#fff" }} placeholderTextColor="#fff" placeholder="Search for Pokemon"
                     />
                 </View>
-                {!isLoading && searchQuery.length && !filteredPokemon.length? <View>
-                    <Text style={{color:"#fff"}}>The pokemon you have searched is unavailable</Text>
-                    </View>:<></>}
+                {!isLoading && searchQuery.length && !filteredPokemon.length ? <View>
+                    <Text style={{ color: "#fff" }}>The pokemon you have searched is unavailable</Text>
+                </View> : <></>}
                 {isLoading && <ActivityIndicator size="large"></ActivityIndicator>}
-                {!isLoading && (searchQuery.length || filteredPokemon) && <FlatList style={{ backgroundColor: "#000" }} numColumns={2}
+                {!isLoading && (searchQuery.length || filteredPokemon) && <FlatList style={{ backgroundColor: "#000", alignSelf: "center" }} numColumns={2}
                     data={searchQuery.length <= 0 ? pokemonListData.pokemonList : filteredPokemon}
                     renderItem={(item) => {
                         var imgIndex = item.item.url.split("/")[6]
@@ -79,9 +81,9 @@ const LandingPage = ({ navigation }) => {
                             imgurl = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/0"
                         }
                         return <TouchableHighlight onPress={() => navigation.navigate("PokemonComponent", { propsdata: { imgurl: imgurl + imgIndex + ".png", apidata: item.item.url } })}>
-                            <View style={{ flex: 1, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", margin: 8, borderRadius: 10, backgroundColor: generateColor() }}>
-                                <Image key={item.index} source={{ uri: imgurl + imgIndex + ".png" }} style={{ width: 200, height: 200 }}></Image>
-                                <Text style={{ color: "#fff", fontSize: 14 }}>{item.item.name}</Text>
+                            <View style={{ flex: 1, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", margin: 10, borderRadius: 10, backgroundColor: generateColor() }}>
+                                <Image key={item.index} source={{ uri: imgurl + imgIndex + ".png" }} style={{ width: 180, height: 180 }}></Image>
+                                <Text style={{ color: "#fff", fontSize: 19, fontWeight: "700" }}>{item.item.name}</Text>
                             </View>
                         </TouchableHighlight>
                     }} >

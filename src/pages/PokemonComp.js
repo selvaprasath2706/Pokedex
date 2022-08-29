@@ -6,95 +6,8 @@ import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { FlatList } from "react-native-gesture-handler";
 import { useSelector, useDispatch } from "react-redux";
 import Lottie from "lottie-react-native"
-const url = "https://pokeapi.co/api/v2/pokemon/1/"
-// const imgurl = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png"
-const data = {
-    abilities: [],
-    base_experience: 64,
-    forms: [],
-    game_indices: [],
-    height: 7,
-    held_items: [],
-    id: 1,
-    is_default: true,
-    location_area_encounters: "https://pokeapi.co/api/v2/pokemon/1/encounters",
-    moves: [],
-    name: "bulbasaur",
-    order: 1,
-    past_types: [],
-    species: {
-        name: "bulbasaur",
-        url: "https://pokeapi.co/api/v2/pokemon-species/1/"
-    },
-    sprites: {},
-    stats: [
-        {
-            base_stat: 45,
-            effort: 0,
-            stat: {
-                name: "hp",
-                url: "https://pokeapi.co/api/v2/stat/1/"
-            }
-        },
-        {
-            base_stat: 49,
-            effort: 0,
-            stat: {
-                name: "attack",
-                url: "https://pokeapi.co/api/v2/stat/2/"
-            }
-        },
-        {
-            base_stat: 49,
-            effort: 0,
-            stat: {
-                name: "defense",
-                url: "https://pokeapi.co/api/v2/stat/3/"
-            }
-        },
-        {
-            base_stat: 65,
-            effort: 1,
-            stat: {
-                name: "special-attack",
-                url: "https://pokeapi.co/api/v2/stat/4/"
-            }
-        },
-        {
-            base_stat: 65,
-            effort: 0,
-            stat: {
-                name: "special-defense",
-                url: "https://pokeapi.co/api/v2/stat/5/"
-            }
-        },
-        {
-            base_stat: 45,
-            effort: 0,
-            stat: {
-                name: "speed",
-                url: "https://pokeapi.co/api/v2/stat/6/"
-            }
-        }
-    ],
-    types: [
-        {
-            slot: 1,
-            type: {
-                name: "grass",
-                url: "https://pokeapi.co/api/v2/type/12/"
-            }
-        },
-        {
-            slot: 2,
-            type: {
-                name: "poison",
-                url: "https://pokeapi.co/api/v2/type/4/"
-            }
-        }
-    ],
-    weight: 69
-}
+// import PokemonComponent from './pages/PokemonComp';
+
 const generateColor = () => {
 
     const randomColor = Math.floor(Math.random() * 16777215)
@@ -116,22 +29,27 @@ const PokemonComponent = ({ route }) => {
 
         < View style={{ flex: 1 }}>
             {
-                pokemonData.isLoading ? <ActivityIndicator></ActivityIndicator> :
+                pokemonData.isLoading ? <Lottie source={require('../lotti/pikachu.json')} autoPlay ></Lottie> :
+                    // <ActivityIndicator></ActivityIndicator> :
                     pokemonData.pokemonData.abilities && !pokemonData.error ? <View style={{ backgroundColor: "#000", flex: 1 }}>
                         <View style={{ justifyContent: "center", alignItems: "center", backgroundColor: generateColor(), borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
                             <Image source={{ uri: imgurl }} style={{ height: 200, width: 200 }}>
                             </Image>
                         </View>
                         <View>
-                            <Text style={{ alignSelf: "center", fontSize: 18, color: "#fff" }}>{pokemonData.pokemonData.species.name}</Text>
-                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-evenly" }}>
-                                {pokemonData.pokemonData.types?.map((item) => {
-                                    return (
-                                        <View key={item.slot} style={{ backgroundColor: generateColor(), borderColor: "#000", borderWidth: 1, borderRadius: 10, paddingLeft: 10, paddingRight: 10 }}>
-                                            <Text key={item.type.name} style={{ marginHorizontal: 10, marginVertical: 2 }}>{item.type.name}</Text>
-                                        </View>
-                                    )
-                                })}
+                            <Text style={{ alignSelf: "center", fontSize: 23, color: "#fff", fontWeight: "bold", marginVertical: 3 }}>{pokemonData.pokemonData.species.name}</Text>
+                            <View style={{ flexDirection: "row",alignItems: "center", justifyContent: "space-evenly" }}>
+                                <Text style={{ color: "#fff",fontSize:17 }}>Types:</Text>
+                                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-evenly" }}>
+                                    {pokemonData.pokemonData.types?.map((item) => {
+                                        return (
+                                            <View key={item.slot} style={{ backgroundColor: generateColor(), borderColor: "#000", borderWidth: 1, borderRadius: 10, paddingLeft: 10, paddingRight: 10 }}>
+                                                <Text key={item.type.name} style={{ marginHorizontal: 10, marginVertical: 2, color: "#fff",fontSize:17  }}>{item.type.name}</Text>
+                                            </View>
+                                        )
+                                    })}
+                                </View>
+
                             </View>
                             <View style={{ flexDirection: "row", justifyContent: "space-around", alignItems: "center", margin: 10, padding: 10 }}>
                                 <View style={{ flexDirection: "column" }}>
