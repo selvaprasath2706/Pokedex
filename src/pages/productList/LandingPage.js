@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux'
-import { loadPokemon } from "../redux/actions/PokemonAction";
+// import { loadPokemon } from "../redux/actions/PokemonAction";
 import { View, Text, Image, FlatList, TouchableHighlight, TextInput, ActivityIndicator } from "react-native";
 import Lottie from "lottie-react-native"
-
+import { getPokemonList } from "./productListSlice";
 const generateColor = () => {
     const randomColor = Math.floor(Math.random() * 16777215)
         .toString(16)
@@ -40,17 +40,18 @@ const LandingPage = ({ navigation }) => {
     const [searchQuery, setSearchQuery] = useState("")
     const [debounceTimeout, setDebounceTimeout] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
-    const pokemonListData = useSelector(state => state.PokemonReducer)
+    const pokemonListData = useSelector(state => state.pokemon.pokemonList)
     const [filteredPokemon, setFilteredPokemon] = useState([])
     const dispatch = useDispatch();
+    // console.log(pokemonListData1)
     useEffect(() => {
-        dispatch(loadPokemon())
+        dispatch(getPokemonList())
         console.log(pokemonListData)
         setIsLoading(pokemonListData.isLoading)
     }, [])
     return (
         <View style={{ flex: 1, backgroundColor: "#000" }}>
-            {console.log(pokemonListData)}
+            {/* {console.log(pokemonListData.pokemonList)} */}
 
             {!pokemonListData.error ? <View style={{ flex: 1 }}>
                 <View style={{ margin: 10 }}>
@@ -90,7 +91,7 @@ const LandingPage = ({ navigation }) => {
                 </FlatList>}
             </View>
                 : <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
-                    <Lottie style={{ height: 200 }} source={require('../lotti/error-2.json')}></Lottie>
+                    <Lottie style={{ height: 200 }} source={require('../../lotti/error-2.json')}></Lottie>
 
                     <Text style={{ flex: 1, fontSize: 30 }}>The server responded with 404 Error</Text>
                 </View>}
