@@ -9,7 +9,6 @@ import Lottie from "lottie-react-native"
 // import PokemonComponent from './pages/PokemonComp';
 
 const generateColor = () => {
-
     const randomColor = Math.floor(Math.random() * 16777215)
         .toString(16)
         .padStart(6, '0');
@@ -29,19 +28,19 @@ const PokemonComponent = ({ route }) => {
 
         < View style={{ flex: 1 }}>
             {
-                pokemonData.isLoading ? <Lottie source={require('../lotti/pikachu.json')} autoPlay ></Lottie> :
+                pokemonData?.isLoading ? <Lottie source={require('../lotti/pikachu.json')} autoPlay ></Lottie> :
                     // <ActivityIndicator></ActivityIndicator> :
-                    pokemonData.pokemonData.abilities && !pokemonData.error ? <View style={{ backgroundColor: "#000", flex: 1 }}>
+                    pokemonData?.pokemonData?.abilities && !pokemonData?.error ? <View style={{ backgroundColor: "#000", flex: 1 }}>
                         <View style={{ justifyContent: "center", alignItems: "center", backgroundColor: generateColor(), borderBottomLeftRadius: 40, borderBottomRightRadius: 40 }}>
                             <Image source={{ uri: imgurl }} style={{ height: 200, width: 200 }}>
                             </Image>
                         </View>
                         <View>
                             <Text style={{ alignSelf: "center", fontSize: 23, color: "#fff", fontWeight: "bold", marginVertical: 3 }}>{pokemonData.pokemonData.species.name}</Text>
-                            <View style={{ flexDirection: "row",alignItems: "center", justifyContent: "space-evenly" }}>
-                                <Text style={{ color: "#fff",fontSize:17 }}>Types:</Text>
-                                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-evenly" }}>
-                                    {pokemonData.pokemonData.types?.map((item) => {
+                            <View style={{ flexDirection: "row",alignItems: "center"}}>
+                                <Text style={{ marginLeft:10,color: "#fff",fontSize:17 }}>Types:</Text>
+                                <View style={{ flex:1,flexDirection: "row", alignItems: "center", justifyContent: "space-evenly" }}>
+                                    {pokemonData?.pokemonData?.types?.map((item) => {
                                         return (
                                             <View key={item.slot} style={{ backgroundColor: generateColor(), borderColor: "#000", borderWidth: 1, borderRadius: 10, paddingLeft: 10, paddingRight: 10 }}>
                                                 <Text key={item.type.name} style={{ marginHorizontal: 10, marginVertical: 2, color: "#fff",fontSize:17  }}>{item.type.name}</Text>
@@ -53,18 +52,18 @@ const PokemonComponent = ({ route }) => {
                             </View>
                             <View style={{ flexDirection: "row", justifyContent: "space-around", alignItems: "center", margin: 10, padding: 10 }}>
                                 <View style={{ flexDirection: "column" }}>
-                                    <Text style={{ color: "#fff", fontWeight: "700", fontSize: 21 }}>{pokemonData.pokemonData.weight} Kg</Text>
+                                    <Text style={{ color: "#fff", fontWeight: "700", fontSize: 21 }}>{pokemonData?.pokemonData?.weight} Kg</Text>
                                     <Text style={{ color: "#fff" }}>Weight</Text>
                                 </View>
                                 <View style={{ flexDirection: "column" }}>
-                                    <Text style={{ color: "#fff", fontWeight: "700", fontSize: 21 }}>{pokemonData.pokemonData.height} M</Text>
+                                    <Text style={{ color: "#fff", fontWeight: "700", fontSize: 21 }}>{pokemonData?.pokemonData?.height} M</Text>
                                     <Text style={{ color: "#fff" }}>Height</Text>
                                 </View>
                             </View>
 
                             {/* <CircularProgress
                     value={100}
-                    maxValue={300}
+                    maxValue={25}
                     activeStrokeColor={'#2465FD'}
                     activeStrokeSecondaryColor={'#C25AFF'}
                 /> */}
@@ -144,7 +143,7 @@ const PokemonComponent = ({ route }) => {
                                     return <View style={{ margin: 10, justifyContent: "center", alignItems: "center" }}>
                                         <CircularProgress
                                             value={item.item.base_stat}
-                                            // maxValue={20}
+                                            maxValue={100}
                                             radius={40}
                                             // title={item.item.stat.name}
                                             titleColor={'white'}

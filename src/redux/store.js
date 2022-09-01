@@ -7,5 +7,5 @@ const rootReducer = combineReducers({
     PokemonReducer,PokemonDataReducer
 })
 export const store = configureStore({ reducer: rootReducer }, applyMiddleware(thunk));
-
+//create
 export default store

@@ -50,9 +50,7 @@ const LandingPage = ({ navigation }) => {
     }, [])
     return (
         <View style={{ flex: 1, backgroundColor: "#000" }}>
-            {console.log(pokemonListData)}
-
-            {!pokemonListData.error ? <View style={{ flex: 1 }}>
+            {!pokemonListData?.error ? <View style={{ flex: 1 }}>
                 <View style={{ margin: 10 }}>
                     <TextInput value={searchQuery} onChangeText={(e) => {
                         setSearchQuery(e)
@@ -64,26 +62,30 @@ const LandingPage = ({ navigation }) => {
                     }} style={{ borderColor: "#6b6a66", backgroundColor: "#6b6a66", borderWidth: 1, borderRadius: 10, color: "#fff" }} placeholderTextColor="#fff" placeholder="Search for Pokemon"
                     />
                 </View>
-                {!isLoading && searchQuery.length && !filteredPokemon.length ? <View>
+                {!isLoading && searchQuery?.length && !filteredPokemon?.length ? <View>
                     <Text style={{ color: "#fff" }}>The pokemon you have searched is unavailable</Text>
                 </View> : <></>}
                 {isLoading && <ActivityIndicator size="large"></ActivityIndicator>}
                 {!isLoading && (searchQuery.length || filteredPokemon) && <FlatList style={{ backgroundColor: "#000", alignSelf: "center" }} numColumns={2}
-                    data={searchQuery.length <= 0 ? pokemonListData.pokemonList : filteredPokemon}
+                    data={searchQuery?.length <= 0 ? pokemonListData?.pokemonList : filteredPokemon}
                     renderItem={(item) => {
-                        var imgIndex = item.item.url.split("/")[6]
-                        var imgurl;
-                        // var imgIndex = item.index + 1;
+                        let imgIndex = item?.item?.url?.split("/")[6]
+                        let imgurl;
                         if (imgIndex < 10) {
                             imgurl = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/00"
                         }
                         else {
                             imgurl = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/0"
                         }
-                        return <TouchableHighlight onPress={() => navigation.navigate("PokemonComponent", { propsdata: { imgurl: imgurl + imgIndex + ".png", apidata: item.item.url } })}>
+                        return <TouchableHighlight onPress={() => {
+                            navigation.navigate("PokemonComponent", { propsdata: { imgurl: imgurl + imgIndex + ".png", apidata: item.item.url } })
+                            if (debounceTimeout) {
+                                clearTimeout(debounceTimeout);
+                            }
+                        }}>
                             <View style={{ flex: 1, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", margin: 10, borderRadius: 10, backgroundColor: generateColor() }}>
-                                <Image key={item.index} source={{ uri: imgurl + imgIndex + ".png" }} style={{ width: 180, height: 180 }}></Image>
-                                <Text style={{ color: "#fff", fontSize: 19, fontWeight: "700" }}>{item.item.name}</Text>
+                                <Image key={item?.index} source={{ uri: imgurl + imgIndex + ".png" }} style={{ width: 180, height: 180 }}></Image>
+                                <Text style={{ color: "#fff", fontSize: 19, fontWeight: "700" }}>{item?.item?.name}</Text>
                             </View>
                         </TouchableHighlight>
                     }} >
@@ -91,19 +93,9 @@ const LandingPage = ({ navigation }) => {
             </View>
                 : <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
                     <Lottie style={{ height: 200 }} source={require('../lotti/error-2.json')}></Lottie>
-
                     <Text style={{ flex: 1, fontSize: 30 }}>The server responded with 404 Error</Text>
                 </View>}
         </View>
     )
-    {/* {data.results.map((pokemons, index) => {
-                return (
-                    // <View key={index} style={{flex:1}}>
-                        <Image key={index} source={{ uri: imgurl + index + ".png" }} style={{ width: 100, height: 100 }}></Image>
-                    // </View>
-                    )
-            })} */}
-
-
 }
 export default LandingPage
